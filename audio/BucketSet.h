@@ -1,5 +1,7 @@
 #pragma once
 
+#include "audio/RingBufferInsertResult.h"
+
 #include <algorithm>
 #include <functional>
 #include <iterator>
@@ -110,6 +112,18 @@ class BucketSet {
             for (int i = 0; i <= i2; ++i)
                 m_buckets[static_cast<size_t>(i)].dirty = true;
         }
+    }
+
+    void setDirty(const Range& range) {
+        if (range.valid())
+            markDirty(range.start, range.end);
+    }
+
+    void setDirty(const RingBufferInsertResult& result) {
+        if (!result.ok)
+            return;
+        setDirty(result.range1);
+        setDirty(result.range2);
     }
 
     class DirtyIterator {

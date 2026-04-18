@@ -11,6 +11,7 @@ target_sources(PhuAudioLib INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/audio/LinkwitzRileyFilter.h
     ${CMAKE_CURRENT_SOURCE_DIR}/audio/NoteToFreq.h
     ${CMAKE_CURRENT_SOURCE_DIR}/audio/PpqAddressedRingBuffer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/audio/RingBufferInsertResult.h
     ${CMAKE_CURRENT_SOURCE_DIR}/events/Event.h
     ${CMAKE_CURRENT_SOURCE_DIR}/events/EventSource.h
     ${CMAKE_CURRENT_SOURCE_DIR}/events/SyncGlobals.h

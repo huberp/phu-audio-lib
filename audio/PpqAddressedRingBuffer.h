@@ -1,5 +1,7 @@
 #pragma once
 
+#include "audio/RingBufferInsertResult.h"
+
 #include <algorithm>
 #include <cmath>
 #include <cstring>
@@ -8,18 +10,6 @@
 
 namespace phu {
 namespace audio {
-
-struct PpqWriteResult {
-    struct Range {
-        int start = 0;
-        int end = 0;
-        bool valid() const noexcept { return end > start; }
-    };
-
-    Range range1;
-    Range range2;
-    bool ok = false;
-};
 
 /**
  * PpqAddressedRingBuffer:
@@ -94,7 +84,7 @@ class PpqAddressedRingBuffer {
         return idx;
     }
 
-    typename PpqWriteResult::Range write(T sample, double ppq) {
+    Range write(T sample, double ppq) {
         if (m_workingSize <= 0)
             return {};
 
@@ -111,8 +101,8 @@ class PpqAddressedRingBuffer {
         m_buffer[static_cast<size_t>(idx)] = value;
     }
 
-    PpqWriteResult insert(double ppq, const T* samples, int count) {
-        PpqWriteResult result;
+    RingBufferInsertResult insert(double ppq, const T* samples, int count) {
+        RingBufferInsertResult result;
         if (m_workingSize <= 0 || samples == nullptr || count <= 0 || count > m_workingSize)
             return result;
 
