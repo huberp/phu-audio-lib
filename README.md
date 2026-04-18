@@ -1,45 +1,23 @@
 # phu-audio-lib
 
-Shared library for PHU JUCE audio plugins. Contains common code extracted from:
+Shared JUCE utility library for PHU plugins.
 
-- **phu-splitter** — Multi-band frequency splitter
-- **phu-compressor** — Beat-synced compressor
-- **phu-beat-sync-multi-scope** — Beat-synced multi-instance oscilloscope
-- **phu-bark-fft-compressor** — Bark-band FFT compressor
+## Hero / Highlights
+- DSP core blocks for real-time audio workflows
+- DAW-sync event state tracking
+- UDP multicast instance-to-instance data/control channels
+- Debug logging pipeline decoupled from UI
+- OpenGL helper layer for shader/renderer patterns
+- SIMD-aligned memory utilities
 
-## CMake Targets
-
-| Target | Type | Description |
-|---|---|---|
-| `PhuAudioLib` | INTERFACE (header-only) | Core audio, events, memory, and utility headers |
-| `PhuNetworkLib` | STATIC | Compiled network broadcasters and debug logger |
-| `PhuGLUtils` | STATIC | OpenGL utilities (shader builder, snapshot renderer) |
-
-## Usage
-
-Add as a git submodule and include in your CMakeLists.txt:
-
-```cmake
-add_subdirectory(phu-audio-lib)
-
-# Link the targets your plugin needs:
-target_link_libraries(YourPlugin PRIVATE PhuAudioLib)        # header-only core
-target_link_libraries(YourPlugin PRIVATE PhuNetworkLib)      # network + debug
-target_link_libraries(YourPlugin PRIVATE PhuGLUtils)         # OpenGL utilities
-```
-
-## Directory Structure
-
-```
-audio/       — Audio DSP/utilities (FIFO, FFT, filters, note conversion, BucketSet, PPQ-addressed ring buffer)
-events/      — Event system (DAW sync globals, listener pattern)
-network/     — UDP multicast broadcasters (spectrum, samples, commands, ctrl) + shared StatefulBroadcaster/CommandBroadcasterBase helpers
-debug/       — Debug logging (MPSC queue, sink interface)
-gl/          — OpenGL utilities (shader builder, snapshot renderer)
-memory/      — SIMD-aligned allocator
-util/        — String utilities
-```
+## Topic Map (for users + coding agents)
+- [audio](docs/audio.md) — fifo, fft, filters, note↔freq, buckets, ppq-ring
+- [events](docs/events.md) — daw globals, listeners, event source
+- [network](docs/network.md) — udp multicast, spectrum/samples/commands/ctrl, state helpers
+- [debug](docs/debug.md) — mpsc log queue, sink, editor logger
+- [gl](docs/gl.md) — glsl builder, renderer base, snapshot pattern
+- [memory](docs/memory.md) — aligned allocator, aligned vector
+- [util](docs/util.md) — safe string copy
 
 ## License
-
 MIT
