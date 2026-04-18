@@ -28,6 +28,9 @@ class BucketSet {
 
     static constexpr int kMaxRmsBuckets = 128;
     static constexpr int kMaxCancelBuckets = 256;
+    static constexpr double kSixteenthNotesPerBeat = 16.0;
+    static constexpr double kCancelBucketDurationSeconds = 0.004; // 4 ms
+    static constexpr double kDefaultRmsDenominator = 1.0;
 
     BucketSet() = default;
 
@@ -82,16 +85,19 @@ class BucketSet {
     void markDirtyIndex(int writeIdx) {
         if (m_buckets.empty())
             return;
-        m_buckets[static_cast<size_t>(findBucket(writeIdx))].dirty = true;
+        const int bucketIdx = findBucket(writeIdx);
+        if (bucketIdx < 0 || bucketIdx >= static_cast<int>(m_buckets.size()))
+            return;
+        m_buckets[static_cast<size_t>(bucketIdx)].dirty = true;
     }
 
-    void markDirtyRange(int u1, int u2) {
+    void markDirtyRange(int startIdx, int endIdx) {
         if (m_buckets.empty())
             return;
 
         const int last = static_cast<int>(m_buckets.size()) - 1;
-        const int i1 = findBucket(u1);
-        const int i2 = findBucket(u2);
+        const int i1 = findBucket(startIdx);
+        const int i2 = findBucket(endIdx);
 
         if (i1 <= i2) {
             for (int i = i1; i <= i2; ++i)
@@ -161,6 +167,8 @@ class BucketSet {
 
   private:
     static int mulDiv(int a, int b, int c) {
+        if (c == 0)
+            return 0;
         return static_cast<int>(static_cast<long long>(a) * b / c);
     }
 
@@ -191,15 +199,8 @@ class BucketSet {
             return;
         }
 
-        int maxBuckets = kMaxRmsBuckets;
-        if (m_mode == Mode::Rms16th) {
-            const double denom = (m_displayBeats > 0.0) ? (m_displayBeats * 16.0) : 1.0;
-            m_bucketSize = std::max(1, static_cast<int>(static_cast<double>(N) / denom));
-            maxBuckets = kMaxRmsBuckets;
-        } else {
-            m_bucketSize = std::max(1, static_cast<int>(std::ceil(m_sampleRate * 0.004)));
-            maxBuckets = kMaxCancelBuckets;
-        }
+        m_bucketSize = calculateMusicalBucketSize(N);
+        const int maxBuckets = (m_mode == Mode::Rms16th) ? kMaxRmsBuckets : kMaxCancelBuckets;
 
         int start = 0;
         while (start < N && static_cast<int>(m_buckets.size()) < maxBuckets) {
@@ -227,6 +228,19 @@ class BucketSet {
         if (bi > last)
             bi = last;
         return bi;
+    }
+
+    int calculateMusicalBucketSize(int bufferSize) const {
+        if (m_mode == Mode::Rms16th) {
+            const double denom =
+                (m_displayBeats > 0.0)
+                    ? (m_displayBeats * kSixteenthNotesPerBeat)
+                    : kDefaultRmsDenominator;
+            return std::max(1, static_cast<int>(static_cast<double>(bufferSize) / denom));
+        }
+
+        return std::max(
+            1, static_cast<int>(std::ceil(m_sampleRate * kCancelBucketDurationSeconds)));
     }
 
     Mode m_mode = Mode::FixedCount;

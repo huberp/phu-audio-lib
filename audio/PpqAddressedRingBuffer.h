@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstring>
+#include <limits>
 #include <vector>
 
 namespace phu {
@@ -39,9 +40,13 @@ class PpqAddressedRingBuffer {
         if (minBpm <= 0.0 || maxSampleRate <= 0.0 || maxBeats <= 0.0)
             return;
 
-        const int cap = std::min(
-            static_cast<int>(std::ceil(maxBeats / minBpm * 60.0 * maxSampleRate)),
-            kMaxCapacitySamples);
+        const double computedCapacity =
+            std::ceil((maxBeats * 60.0 * maxSampleRate) / minBpm);
+        const double maxIntAsDouble = static_cast<double>(std::numeric_limits<int>::max());
+        const double clampedCapacity = std::isfinite(computedCapacity)
+            ? std::min(computedCapacity, maxIntAsDouble)
+            : maxIntAsDouble;
+        const int cap = std::min(static_cast<int>(clampedCapacity), kMaxCapacitySamples);
         m_buffer.resize(static_cast<size_t>(cap), T{});
     }
 
@@ -50,7 +55,7 @@ class PpqAddressedRingBuffer {
             return false;
 
         const int desired =
-            static_cast<int>(std::ceil(displayBeats / bpm * 60.0 * sampleRate));
+            static_cast<int>(std::ceil((displayBeats * 60.0 * sampleRate) / bpm));
         const int capped = capacity() > 0 ? std::min(desired, capacity()) : desired;
         const bool changed = capped != m_workingSize;
         m_workingSize = std::max(0, capped);
