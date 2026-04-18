@@ -47,9 +47,9 @@ SampleBroadcaster::SampleBroadcaster()
 // ============================================================================
 
 void SampleBroadcaster::onShutdown() {
-    clearRemoteStates(receiveMutex, latestPackets);
-#ifndef NDEBUG
     std::lock_guard<std::mutex> lock(receiveMutex);
+    latestPackets.clear();
+#ifndef NDEBUG
     lastSeqNums.clear();
 #endif
 }

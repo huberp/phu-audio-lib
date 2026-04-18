@@ -3,6 +3,7 @@
 #include "MulticastBroadcasterBase.h"
 
 #include <cstdint>
+#include <limits>
 #include <map>
 #include <mutex>
 #include <vector>
@@ -32,6 +33,8 @@ class StatefulBroadcaster : public MulticastBroadcasterBase {
     template <typename RemoteState, typename PrunePredicate>
     static void getRemoteStates(std::mutex& mutex, std::map<uint32_t, RemoteState>& states,
                                 std::vector<RemoteState>& out, PrunePredicate shouldPrune) {
+        // Snapshot semantics: callers receive only the current state map contents.
+        // Existing output contents are intentionally discarded.
         out.clear();
 
         std::lock_guard<std::mutex> lock(mutex);
@@ -49,7 +52,13 @@ class StatefulBroadcaster : public MulticastBroadcasterBase {
     template <typename RemoteState>
     static int getNumRemoteStates(std::mutex& mutex, const std::map<uint32_t, RemoteState>& states) {
         std::lock_guard<std::mutex> lock(mutex);
-        return static_cast<int>(states.size());
+        // Keep int return to match existing broadcaster public APIs.
+        // Clamp defensively in the impossible-but-safe case of extreme map size.
+        const auto stateCount = states.size();
+        if (stateCount > static_cast<size_t>(std::numeric_limits<int>::max())) {
+            return std::numeric_limits<int>::max();
+        }
+        return static_cast<int>(stateCount);
     }
 };
 
