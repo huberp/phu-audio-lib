@@ -218,7 +218,7 @@ auto changed = rb.insert(ppqStart, block, num);
 - On the UI/message thread, `FFTProcessor` pulls available samples from that FIFO.
 - `FFTProcessor::process(...)` computes and smooths the spectrum for rendering widgets.
 
-### Compute RMS over 1/16 of a buffer that spans 2 beats
+### Compute RMS over a 1/16 note duration within a 2-beat buffer
 - `SyncGlobals` provides current BPM and sample-rate context per process run.
 - `PpqAddressedRingBuffer` stores the 2-beat rolling buffer keyed by PPQ.
 - Convert 1/16 note duration to samples from BPM/sample-rate, read that segment, then compute RMS.
