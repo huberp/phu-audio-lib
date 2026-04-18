@@ -6,9 +6,11 @@ add_library(PhuAudioLib INTERFACE)
 target_include_directories(PhuAudioLib INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 target_sources(PhuAudioLib INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/audio/AudioSampleFifo.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/audio/BucketSet.h
     ${CMAKE_CURRENT_SOURCE_DIR}/audio/FFTProcessor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/audio/LinkwitzRileyFilter.h
     ${CMAKE_CURRENT_SOURCE_DIR}/audio/NoteToFreq.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/audio/PpqAddressedRingBuffer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/events/Event.h
     ${CMAKE_CURRENT_SOURCE_DIR}/events/EventSource.h
     ${CMAKE_CURRENT_SOURCE_DIR}/events/SyncGlobals.h
@@ -18,6 +20,7 @@ target_sources(PhuAudioLib INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/network/SpectrumBroadcaster.h
     ${CMAKE_CURRENT_SOURCE_DIR}/network/SampleBroadcaster.h
     ${CMAKE_CURRENT_SOURCE_DIR}/network/CommandBroadcaster.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/network/CommandBroadcasterBase.h
     ${CMAKE_CURRENT_SOURCE_DIR}/network/CtrlBroadcaster.h
     ${CMAKE_CURRENT_SOURCE_DIR}/debug/EditorLogger.h
     ${CMAKE_CURRENT_SOURCE_DIR}/debug/DebugLogEventQueue.h

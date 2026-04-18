@@ -30,7 +30,7 @@ static constexpr uint16_t COMMAND_VERSION = 1;
 // ============================================================================
 
 CommandBroadcaster::CommandBroadcaster()
-    : MulticastBroadcasterBase(MULTICAST_GROUP, MULTICAST_PORT) {}
+    : CommandBroadcasterBase(MULTICAST_GROUP, MULTICAST_PORT) {}
 
 // ============================================================================
 // Sending
@@ -97,14 +97,11 @@ bool CommandBroadcaster::sendMuteCommand(uint8_t bandIndex, bool mute,
 // ============================================================================
 
 void CommandBroadcaster::addListener(CommandListener* listener) {
-    std::lock_guard<std::mutex> lock(listenerMutex);
-    if (std::find(listeners.begin(), listeners.end(), listener) == listeners.end())
-        listeners.push_back(listener);
+    CommandBroadcasterBase::addListener(listenerMutex, listeners, listener);
 }
 
 void CommandBroadcaster::removeListener(CommandListener* listener) {
-    std::lock_guard<std::mutex> lock(listenerMutex);
-    listeners.erase(std::remove(listeners.begin(), listeners.end(), listener), listeners.end());
+    CommandBroadcasterBase::removeListener(listenerMutex, listeners, listener);
 }
 
 // ============================================================================
@@ -131,7 +128,7 @@ void CommandBroadcaster::receiverThreadRun() {
             continue;
 
         // Ignore own packets
-        if (pkt.instanceID == instanceID)
+        if (!shouldAcceptFromPeer(pkt.instanceID, instanceID))
             continue;
 
         // Validate version
@@ -147,18 +144,14 @@ void CommandBroadcaster::receiverThreadRun() {
 
         // Target group filtering: accept if target is "all" or matches our group
         std::string target(pkt.targetGroup);
-        if (target != CMD_TARGET_ALL && target != ownGroup)
+        if (!shouldAcceptForGroup(target, ownGroup))
             continue;
 
         // Dispatch to listeners
         auto cmdType = static_cast<CommandType>(pkt.commandType);
-        {
-            std::lock_guard<std::mutex> lock(listenerMutex);
-            for (auto* listener : listeners) {
-                listener->onCommandReceived(cmdType, pkt.instanceID,
-                                            target, pkt.payload, pkt.payloadSize);
-            }
-        }
+        dispatchToListeners(listenerMutex, listeners, [&](CommandListener& listener) {
+            listener.onCommandReceived(cmdType, pkt.instanceID, target, pkt.payload, pkt.payloadSize);
+        });
     }
 }
 

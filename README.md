@@ -31,9 +31,9 @@ target_link_libraries(YourPlugin PRIVATE PhuGLUtils)         # OpenGL utilities
 ## Directory Structure
 
 ```
-audio/       — Audio DSP utilities (FIFO, FFT, filters, note conversion)
+audio/       — Audio DSP/utilities (FIFO, FFT, filters, note conversion, BucketSet, PPQ-addressed ring buffer)
 events/      — Event system (DAW sync globals, listener pattern)
-network/     — UDP multicast broadcasters (spectrum, samples, commands, ctrl) + shared StatefulBroadcaster helpers
+network/     — UDP multicast broadcasters (spectrum, samples, commands, ctrl) + shared StatefulBroadcaster/CommandBroadcasterBase helpers
 debug/       — Debug logging (MPSC queue, sink interface)
 gl/          — OpenGL utilities (shader builder, snapshot renderer)
 memory/      — SIMD-aligned allocator
