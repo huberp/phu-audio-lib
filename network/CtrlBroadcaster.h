@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MulticastBroadcasterBase.h"
+#include "StatefulBroadcaster.h"
 
 #include <atomic>
 #include <cstdint>
@@ -84,7 +84,7 @@ struct RemoteInstanceInfo {
  *
  * LOCALHOST-ONLY: see MulticastBroadcasterBase for the MTU assumption.
  */
-class CtrlBroadcaster : public MulticastBroadcasterBase {
+class CtrlBroadcaster : public StatefulBroadcaster {
   public:
     /** Multicast group address (same as SampleBroadcaster). */
     static constexpr const char* MULTICAST_GROUP       = "239.255.42.1";

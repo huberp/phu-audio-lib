@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MulticastBroadcasterBase.h"
+#include "CommandBroadcasterBase.h"
 
 #include <cstdint>
 #include <cstring>
@@ -123,7 +123,7 @@ class CommandListener {
  * - The receiver thread dispatches to CommandListener objects; listeners must
  *   be thread-safe or marshal internally.
  */
-class CommandBroadcaster : public MulticastBroadcasterBase {
+class CommandBroadcaster : public CommandBroadcasterBase {
   public:
     /** Uses the same multicast group as SpectrumBroadcaster. */
     static constexpr const char* MULTICAST_GROUP = "239.255.42.1";

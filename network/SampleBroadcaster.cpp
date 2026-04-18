@@ -40,7 +40,7 @@ static constexpr int kRawPacketHeaderSize =
 // ============================================================================
 
 SampleBroadcaster::SampleBroadcaster()
-    : MulticastBroadcasterBase(MULTICAST_GROUP, MULTICAST_PORT) {}
+    : StatefulBroadcaster(MULTICAST_GROUP, MULTICAST_PORT) {}
 
 // ============================================================================
 // Shutdown hook
@@ -107,25 +107,15 @@ std::vector<SampleBroadcaster::RemoteRawPacket> SampleBroadcaster::getReceivedPa
 }
 
 void SampleBroadcaster::getReceivedPackets(std::vector<RemoteRawPacket>& out) {
-    out.clear();
-    int64_t now = getCurrentTimeMs();
-
-    std::lock_guard<std::mutex> lock(receiveMutex);
-
-    auto it = latestPackets.begin();
-    while (it != latestPackets.end()) {
-        if (now - it->second.timestamp > STALE_TIMEOUT_MS) {
-            it = latestPackets.erase(it); // Prune stale entry
-        } else {
-            out.push_back(it->second);
-            ++it;
-        }
-    }
+    const int64_t now = getCurrentTimeMs();
+    getRemoteStates(receiveMutex, latestPackets, out,
+                    [now](const RemoteRawPacket& packet) {
+                        return now - packet.timestamp > STALE_TIMEOUT_MS;
+                    });
 }
 
 int SampleBroadcaster::getNumRemoteInstances() const {
-    std::lock_guard<std::mutex> lock(receiveMutex);
-    return static_cast<int>(latestPackets.size());
+    return getNumRemoteStates(receiveMutex, latestPackets);
 }
 
 void SampleBroadcaster::receiverThreadRun() {

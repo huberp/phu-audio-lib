@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MulticastBroadcasterBase.h"
+#include "StatefulBroadcaster.h"
 
 #include <cstdint>
 #include <map>
@@ -34,7 +34,7 @@ namespace network {
  *
  * LOCALHOST-ONLY: see MulticastBroadcasterBase for the MTU assumption.
  */
-class SampleBroadcaster : public MulticastBroadcasterBase {
+class SampleBroadcaster : public StatefulBroadcaster {
   public:
     /** Multicast group address (administratively scoped, local org). */
     static constexpr const char* MULTICAST_GROUP = "239.255.42.1";
