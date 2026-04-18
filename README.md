@@ -33,7 +33,7 @@ target_link_libraries(YourPlugin PRIVATE PhuGLUtils)         # OpenGL utilities
 ```
 audio/       — Audio DSP utilities (FIFO, FFT, filters, note conversion)
 events/      — Event system (DAW sync globals, listener pattern)
-network/     — UDP multicast broadcasters (spectrum, samples, commands, ctrl)
+network/     — UDP multicast broadcasters (spectrum, samples, commands, ctrl) + shared StatefulBroadcaster helpers
 debug/       — Debug logging (MPSC queue, sink interface)
 gl/          — OpenGL utilities (shader builder, snapshot renderer)
 memory/      — SIMD-aligned allocator

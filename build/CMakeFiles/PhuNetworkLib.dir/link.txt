@@ -1,2 +1,0 @@
-/usr/bin/ar qc libPhuNetworkLib.a CMakeFiles/PhuNetworkLib.dir/network/MulticastBroadcasterBase.cpp.o CMakeFiles/PhuNetworkLib.dir/network/SpectrumBroadcaster.cpp.o CMakeFiles/PhuNetworkLib.dir/network/SampleBroadcaster.cpp.o CMakeFiles/PhuNetworkLib.dir/network/CommandBroadcaster.cpp.o CMakeFiles/PhuNetworkLib.dir/network/CtrlBroadcaster.cpp.o CMakeFiles/PhuNetworkLib.dir/debug/EditorLogger.cpp.o
-/usr/bin/ranlib libPhuNetworkLib.a

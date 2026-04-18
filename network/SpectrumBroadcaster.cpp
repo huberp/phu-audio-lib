@@ -31,15 +31,14 @@ static constexpr uint32_t PROTOCOL_VERSION = 2;
 // ============================================================================
 
 SpectrumBroadcaster::SpectrumBroadcaster()
-    : MulticastBroadcasterBase(MULTICAST_GROUP, MULTICAST_PORT) {}
+    : StatefulBroadcaster(MULTICAST_GROUP, MULTICAST_PORT) {}
 
 // ============================================================================
 // Shutdown hook
 // ============================================================================
 
 void SpectrumBroadcaster::onShutdown() {
-    std::lock_guard<std::mutex> lock(receiveMutex);
-    latestSpectrums.clear();
+    clearRemoteStates(receiveMutex, latestSpectrums);
 }
 
 // ============================================================================
@@ -88,27 +87,16 @@ bool SpectrumBroadcaster::broadcastSpectrum(const float* magnitudes, int numBins
 
 std::vector<SpectrumBroadcaster::RemoteSpectrum> SpectrumBroadcaster::getReceivedSpectrums() {
     std::vector<RemoteSpectrum> results;
-    int64_t now = getCurrentTimeMs();
-
-    std::lock_guard<std::mutex> lock(receiveMutex);
-
-    // Collect all non-stale entries and prune stale ones
-    auto it = latestSpectrums.begin();
-    while (it != latestSpectrums.end()) {
-        if (now - it->second.timestamp > STALE_TIMEOUT_MS) {
-            it = latestSpectrums.erase(it); // Prune stale entry
-        } else {
-            results.push_back(it->second);
-            ++it;
-        }
-    }
-
+    const int64_t now = getCurrentTimeMs();
+    getRemoteStates(receiveMutex, latestSpectrums, results,
+                    [now](const RemoteSpectrum& spectrum) {
+                        return now - spectrum.timestamp > STALE_TIMEOUT_MS;
+                    });
     return results;
 }
 
 int SpectrumBroadcaster::getNumRemoteInstances() const {
-    std::lock_guard<std::mutex> lock(receiveMutex);
-    return static_cast<int>(latestSpectrums.size());
+    return getNumRemoteStates(receiveMutex, latestSpectrums);
 }
 
 void SpectrumBroadcaster::receiverThreadRun() {

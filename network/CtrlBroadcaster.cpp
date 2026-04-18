@@ -59,15 +59,14 @@ static const char* ctrlEventTypeToString(const CtrlEventType eventType) {
 // ============================================================================
 
 CtrlBroadcaster::CtrlBroadcaster()
-    : MulticastBroadcasterBase(MULTICAST_GROUP, MULTICAST_PORT) {}
+    : StatefulBroadcaster(MULTICAST_GROUP, MULTICAST_PORT) {}
 
 // ============================================================================
 // Shutdown hook
 // ============================================================================
 
 void CtrlBroadcaster::onShutdown() {
-    std::lock_guard<std::mutex> lock(m_mutex);
-    m_remoteInfos.clear();
+    clearRemoteStates(m_mutex, m_remoteInfos);
 }
 
 // ============================================================================
@@ -141,24 +140,13 @@ std::vector<RemoteInstanceInfo> CtrlBroadcaster::getRemoteInfos() {
 }
 
 void CtrlBroadcaster::getRemoteInfos(std::vector<RemoteInstanceInfo>& out) {
-    out.clear();
     const int64_t now = getCurrentTimeMs();
-
-    std::lock_guard<std::mutex> lock(m_mutex);
-
-    auto it = m_remoteInfos.begin();
-    while (it != m_remoteInfos.end()) {
-        const bool stale   = (now - it->second.lastSeenMs > STALE_TIMEOUT_MS);
-        const bool offline = !it->second.isOnline;
-
-        if (offline || stale) {
-            // Remove instances that said Goodbye or have been silent too long
-            it = m_remoteInfos.erase(it);
-        } else {
-            out.push_back(it->second);
-            ++it;
-        }
-    }
+    getRemoteStates(m_mutex, m_remoteInfos, out,
+                    [now](const RemoteInstanceInfo& info) {
+                        const bool stale   = (now - info.lastSeenMs > STALE_TIMEOUT_MS);
+                        const bool offline = !info.isOnline;
+                        return stale || offline;
+                    });
 }
 
 void CtrlBroadcaster::receiverThreadRun() {

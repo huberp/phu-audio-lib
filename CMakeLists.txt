@@ -14,6 +14,7 @@ target_sources(PhuAudioLib INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/events/SyncGlobals.h
     ${CMAKE_CURRENT_SOURCE_DIR}/events/SyncGlobalsListener.h
     ${CMAKE_CURRENT_SOURCE_DIR}/network/MulticastBroadcasterBase.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/network/StatefulBroadcaster.h
     ${CMAKE_CURRENT_SOURCE_DIR}/network/SpectrumBroadcaster.h
     ${CMAKE_CURRENT_SOURCE_DIR}/network/SampleBroadcaster.h
     ${CMAKE_CURRENT_SOURCE_DIR}/network/CommandBroadcaster.h

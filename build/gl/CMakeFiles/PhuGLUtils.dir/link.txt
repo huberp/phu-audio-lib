@@ -1,2 +1,0 @@
-/usr/bin/ar qc libPhuGLUtils.a CMakeFiles/PhuGLUtils.dir/GLSLShaderBuilder.cpp.o
-/usr/bin/ranlib libPhuGLUtils.a
