@@ -6,6 +6,9 @@ General small utility helpers.
 **Purpose**
 - Safe bounded C-string copy with forced null termination.
 
+**Typical use case**
+- Copy user-entered labels into fixed-size network or UI buffers without overflow.
+
 **Need to know**
 - Signature: `safe_strncpy(char* dest, const char* src, size_t dest_size)`.
 - No-op when `dest_size == 0`.
