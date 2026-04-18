@@ -6,6 +6,9 @@ OpenGL helper utilities for shader setup + renderer state handoff.
 **Purpose**
 - Centralized GLSL version detection, fragment assembly, compile/link flow.
 
+**Typical use case**
+- Build a single shader source that works across legacy and modern OpenGL contexts.
+
 **Need to know**
 - `getVersionDirective()` chooses `#version` by runtime context.
 - `buildFragmentShader(...)` adapts output syntax (`fragColor` vs `gl_FragColor`).
@@ -29,6 +32,9 @@ auto frag = GLSLShaderBuilder::buildFragmentShader("uniform vec4 u;\n", "    fra
 **Purpose**
 - Base class for renderer lifecycle + shader ownership.
 
+**Typical use case**
+- Implement a reusable scoped renderer class with explicit create/release hooks.
+
 **Need to know**
 - Override `create(ctx)`.
 - Call `release()` on context close.
@@ -46,6 +52,9 @@ auto frag = GLSLShaderBuilder::buildFragmentShader("uniform vec4 u;\n", "    fra
 ## `GLSnapshotRenderer<SnapshotType>`
 **Purpose**
 - Double-buffered snapshot handoff between UI thread and GL thread.
+
+**Typical use case**
+- Pass analyzer/UI state to the GL render loop without stalling either thread.
 
 **Need to know**
 - UI thread: `setSnapshot(...)`.

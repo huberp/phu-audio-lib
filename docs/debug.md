@@ -6,6 +6,9 @@ Debug logging primitives (queue + sink + logger integration).
 **Purpose**
 - Abstract UI/consumer interface for log output.
 
+**Typical use case**
+- Implement an editor-side log panel that receives queued debug lines.
+
 **Need to know**
 - Required: `onLogMessage(...)`.
 - Optional: `onLogQueueOverflow(...)`.
@@ -21,6 +24,9 @@ Debug logging primitives (queue + sink + logger integration).
 ## `DebugLogEventQueue`
 **Purpose**
 - Bounded MPSC ring queue for log messages.
+
+**Typical use case**
+- Push logs from audio/network threads and drain them later on the message thread.
 
 **Need to know**
 - `tryPush()` from many producer threads.
@@ -45,6 +51,9 @@ int n = queue.popBatch(batch, 32);
 ## `EditorLogger` (`PHU_DEBUG_UI` builds)
 **Purpose**
 - JUCE `Logger` implementation writing into `DebugLogEventQueue`.
+
+**Typical use case**
+- Replace JUCE’s current logger in debug builds so plugin logs appear in a custom UI sink.
 
 **Need to know**
 - `setSink()` binds UI sink.

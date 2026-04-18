@@ -6,6 +6,9 @@ UDP multicast broadcasters for inter-instance state/data sync.
 **Purpose**
 - Shared socket lifecycle + receiver-thread base for multicast channels.
 
+**Typical use case**
+- Build a new peer-to-peer multicast data channel on top of shared socket/thread code.
+
 **Need to know**
 - `initialize()` sets up sockets + starts receiver thread.
 - `shutdown()` stops thread + closes sockets.
@@ -24,6 +27,9 @@ UDP multicast broadcasters for inter-instance state/data sync.
 **Purpose**
 - Helpers for mutex-protected `map<instanceID, state>` snapshots + pruning.
 
+**Typical use case**
+- Maintain latest state per remote plugin instance and remove stale peers.
+
 **Need to know**
 - Utility methods: `clearRemoteStates`, `getRemoteStates`, `getNumRemoteStates`.
 
@@ -36,6 +42,9 @@ UDP multicast broadcasters for inter-instance state/data sync.
 **Purpose**
 - Shared helpers for command-style channels.
 
+**Typical use case**
+- Implement targeted command fan-out while reusing group/self filtering logic.
+
 **Need to know**
 - Peer filtering (`self`, `target-group`).
 - Thread-safe listener add/remove/dispatch helpers.
@@ -45,6 +54,9 @@ UDP multicast broadcasters for inter-instance state/data sync.
 ## `SpectrumBroadcaster`
 **Purpose**
 - Broadcast + receive compressed spectrum snapshots.
+
+**Typical use case**
+- Show spectra from other plugin instances in a shared analyzer view.
 
 **Need to know**
 - dB-domain quantization to 8-bit bins.
@@ -70,6 +82,9 @@ auto remotes = spectrum.getReceivedSpectrums();
 **Purpose**
 - Broadcast + receive raw mono audio chunks tagged with PPQ/BPM metadata.
 
+**Typical use case**
+- Feed a remote oscilloscope lane with beat-aligned raw samples from peers.
+
 **Need to know**
 - `broadcastRawSamples(...)` supports audio-thread sender path.
 - Receiver stores latest packet per remote instance.
@@ -94,6 +109,9 @@ sample.getReceivedPackets(packets);
 **Purpose**
 - Broadcast + receive discrete control commands (solo/mute/custom).
 
+**Typical use case**
+- Trigger synchronized solo/mute actions across grouped plugin instances.
+
 **Need to know**
 - Wire packet: `CommandPacket` with `targetGroup` + payload.
 - Listener callback: `CommandListener::onCommandReceived(...)`.
@@ -116,6 +134,9 @@ cmd.sendSoloCommand(2, true, "bus-A");
 ## `CtrlBroadcaster`
 **Purpose**
 - Broadcast instance identity/control metadata (announce, label, range, goodbye, mode).
+
+**Typical use case**
+- Keep remote instance names, colors, ranges, and mode labels in sync for UI selection.
 
 **Need to know**
 - Event enum: `CtrlEventType`.

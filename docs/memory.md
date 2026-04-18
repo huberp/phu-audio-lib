@@ -6,6 +6,9 @@ SIMD-friendly aligned allocation helpers.
 **Purpose**
 - STL allocator that guarantees alignment boundary (`Alignment`, default 32 bytes).
 
+**Typical use case**
+- Backing SIMD-heavy processing buffers where predictable alignment is required.
+
 **Need to know**
 - POSIX: `posix_memalign`; Windows: `_aligned_malloc`.
 - Throws `std::bad_alloc` on allocation failure.
@@ -22,6 +25,9 @@ SIMD-friendly aligned allocation helpers.
 ## `AlignedVector<T, Alignment>`
 **Purpose**
 - `std::vector` alias using `AlignedAllocator`.
+
+**Typical use case**
+- Store FFT input/output arrays while preserving aligned contiguous storage.
 
 **Need to know**
 - Drop-in vector replacement with aligned storage.
