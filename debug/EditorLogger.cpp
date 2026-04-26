@@ -1,4 +1,4 @@
-#if PHU_DEBUG_UI // Debug builds only
+#ifndef NDEBUG // Debug builds only
 
 #include "EditorLogger.h"
 
@@ -23,4 +23,4 @@ void EditorLogger::logMessage(const juce::String& message) {
 } // namespace debug
 } // namespace phu
 
-#endif // PHU_DEBUG_UI
+#endif // NDEBUG

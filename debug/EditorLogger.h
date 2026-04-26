@@ -1,6 +1,6 @@
 #pragma once
 
-#if PHU_DEBUG_UI // Debug builds only
+#ifndef NDEBUG // Debug builds only
 
 #include <atomic>
 #include <juce_core/juce_core.h>
@@ -121,4 +121,4 @@ class EditorLogger : public juce::Logger {
         (void)(msg);                                                                               \
     } while (0)
 
-#endif // PHU_DEBUG_UI
+#endif // NDEBUG
