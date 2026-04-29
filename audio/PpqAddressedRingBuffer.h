@@ -12,9 +12,25 @@ namespace phu {
 namespace audio {
 
 /**
- * PpqAddressedRingBuffer:
- * - Position-addressed single-sample writes (RawSampleBuffer-style)
- * - Block inserts with wrap-aware dirty ranges (PpqRingBuffer-style)
+ * PpqAddressedRingBuffer — chronological ring buffer with PPQ-based addressing.
+ *
+ * Stores a scrolling history of samples indexed by their PPQ (musical time)
+ * position. Supports both single-sample writes and block inserts with
+ * wrap-aware dirty-range reporting for downstream aggregation pipelines
+ * (e.g. RMS metering via BucketSet).
+ *
+ * ## Relationship to BeatSyncBuffer
+ * These two classes are complementary patterns for beat-synced display:
+ *
+ * | Class                    | Storage model         | Write semantics       | Read semantics           |
+ * |--------------------------|-----------------------|-----------------------|--------------------------|
+ * | PpqAddressedRingBuffer   | Chronological ring    | Append (block insert) | Dirty-range iteration    |
+ * | BeatSyncBuffer           | Fixed bin array       | Overwrite by position | Direct pointer / getBin  |
+ *
+ * Use `PpqAddressedRingBuffer` when you need a scrolling history of samples with
+ * precise PPQ addressing for bucket-aggregation pipelines. Use `BeatSyncBuffer`
+ * when you want a stable, low-latency snapshot of the current beat cycle suitable
+ * for direct pixel-mapped rendering.
  */
 template <typename T>
 class PpqAddressedRingBuffer {

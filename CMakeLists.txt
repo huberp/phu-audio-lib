@@ -6,7 +6,9 @@ add_library(PhuAudioLib INTERFACE)
 target_include_directories(PhuAudioLib INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 target_sources(PhuAudioLib INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/audio/AudioSampleFifo.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/audio/BeatSyncBuffer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/audio/BucketSet.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/audio/PacketFifo.h
     ${CMAKE_CURRENT_SOURCE_DIR}/audio/FFTProcessor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/audio/LinkwitzRileyFilter.h
     ${CMAKE_CURRENT_SOURCE_DIR}/audio/NoteToFreq.h
