@@ -49,3 +49,6 @@ endif()
 
 # --- OpenGL utilities (optional) ---
 add_subdirectory(gl)
+
+# --- Analog circuit simulation DSP library ---
+add_subdirectory(analog)
