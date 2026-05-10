@@ -257,7 +257,7 @@ float out = vmu.processSample(inputSample);
 
 **Need to know**
 - `TimingKind::Fixed` — single-pole attack and release (classic peak-follower).
-- `TimingKind::AutoRelease` — single-pole attack; two parallel release branches (fast + slow), output is `max(cvFast, cvSlow)`, giving rapid recovery after brief transients and slow recovery after sustained loud passages.
+- `TimingKind::AutoRelease` — single-pole attack; two parallel release branches (fast + slow), output is the max of the two branch envelopes, giving rapid recovery after brief transients and slow recovery after sustained loud passages.
 - Input is full-wave rectified; scaling from normalised samples to volts is applied before rectification.
 - `prepare(sampleRate)` must be called before `processSample()` and whenever the sample rate or config changes.
 - `controlVoltage()` returns the current CV without advancing state.
@@ -297,7 +297,7 @@ float cv = det.processSample(sidechainSample); // V
 
 **Need to know**
 - Both filters use the bilinear transform; the −3 dB points are exact at `hpfCutoffHz` and `lpfCutoffHz`.
-- `drive = 1.0` is fully linear; `drive > 1.0` applies tanh soft-clipping with unity small-signal gain (only the knee sharpness changes, not the level).  Values up to ~10 produce musically useful harmonic distortion.
+- `drive = 1.0` is fully linear; `drive > 1.0` applies tanh soft-clipping with unity small-signal gain (only the knee sharpness changes, not the level). Values up to ~10 produce musically useful harmonic distortion.
 - Instantiate one `TransformerLinear` per channel for stereo.
 - `setConfig()` followed by `prepare()` updates coefficients at runtime (e.g. in response to a UI parameter change).
 - Defaults: HPF at 30 Hz, LPF at 18 kHz, `drive = 1.0`.
