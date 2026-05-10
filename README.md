@@ -4,6 +4,7 @@ Shared JUCE utility library for PHU plugins.
 
 ## Hero / Highlights
 - DSP core blocks for real-time audio workflows
+- Analog circuit modeling: MNA solver, Koren triode, tube stages, sidechain detector, transformer coloration
 - DAW-sync event state tracking
 - UDP multicast instance-to-instance data/control channels
 - Debug logging pipeline decoupled from UI
@@ -11,6 +12,7 @@ Shared JUCE utility library for PHU plugins.
 - SIMD-aligned memory utilities
 
 ## Topic Map (for users + coding agents)
+- [analog](docs/analog.md) — MNA circuit solver, Koren triode, tube gain stages, sidechain detector, transformer coloration
 - [audio](docs/audio.md) — fifo, fft, filters, note↔freq, buckets, ppq-ring
 - [events](docs/events.md) — daw globals, listeners, event source
 - [network](docs/network.md) — udp multicast, spectrum/samples/commands/ctrl, state helpers
