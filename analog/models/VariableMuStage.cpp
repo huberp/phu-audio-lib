@@ -165,7 +165,12 @@ float VariableMuStage::processSample(float sample) noexcept
     // Apply CV bias: shift the effective grid voltage more negative.
     // vinBiased is the grid-to-ground voltage seen by the stage;
     // Vgk = vinBiased − Vk = (Vin − cvBias_) − Vk.
-    const double vinBiased = Vin - cvBias_;
+    //
+    // Grid-conduction onset: a real triode draws grid current when Vgk > 0,
+    // which clamps the grid near the cathode potential.  Enforce this by
+    // limiting vinBiased to the previous-sample cathode voltage x_[1].
+    // One-sample-delayed approximation; accurate at audio rates.
+    const double vinBiased = std::min(Vin - cvBias_, x_[1]);
 
     const double Vcc   = cfg_.Vcc;
     const double invRp = 1.0 / cfg_.Rp;

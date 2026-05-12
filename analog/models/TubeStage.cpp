@@ -57,6 +57,10 @@ float TubeStage::processSample(float sample) noexcept
     // 1. Scale input sample to grid voltage; clamp for convergence protection.
     double Vin = static_cast<double>(Analog::sampleToVolts(sample));
     Vin = std::clamp(Vin, -cfg_.inputClampV, cfg_.inputClampV);
+    // Grid-conduction onset: a real triode draws grid current when Vgk > 0,
+    // clamping the grid near the cathode.  Enforce Vgk ≤ 0 by limiting Vin
+    // to the previous-sample cathode voltage x_[1] (one-sample delay).
+    Vin = std::min(Vin, x_[1]);
 
     const double Vcc   = cfg_.Vcc;
     const double invRp = 1.0 / cfg_.Rp;

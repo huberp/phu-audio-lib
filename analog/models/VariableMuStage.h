@@ -22,10 +22,12 @@ struct VariableMuStageConfig {
     double Rk          = 1.5e3;  ///< Cathode resistor (Ω).
     double Ck          = 0.0;    ///< Cathode bypass capacitance (F); 0 = no bypass.
 
-    /// ±V clamp applied to the audio grid input before the solve.
-    /// Guards against divergence with extreme input; does not affect normal
-    /// audio levels (±1.0 full-scale = ±10 V).
-    double inputClampV = 5.0;
+    /// Last-resort ±V hard clamp applied to the raw audio grid input before the
+    /// NR solve.  Guards against solver divergence on truly extreme inputs (e.g.
+    /// run-away DC offsets from upstream stages).  With the Vgk ≤ 0 grid-
+    /// conduction clamp enforced inside processSample, this threshold is never
+    /// reached during normal audio operation (±1.0 full-scale = ±10 V).
+    double inputClampV = 50.0;
 
     /// Maximum additional negative grid bias (V) that the CV can impose.
     /// CV is clamped to [0, cvMaxV] before being applied.
