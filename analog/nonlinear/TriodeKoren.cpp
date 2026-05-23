@@ -31,6 +31,15 @@ TubeParams TubeParams::tubeParams6072() noexcept
     return { /*mu=*/70.0, /*kp=*/300.0, /*kvb=*/300.0, /*kg1=*/1060.0, /*x=*/1.4 };
 }
 
+TubeParams TubeParams::tubeParams12BH7() noexcept
+{
+    // Medium-gain dual triode (GE / RCA 12BH7A).
+    // µ ≈ 16.5, rp ≈ 5.3 kΩ, Gm ≈ 3.1 mA/V at typical operating point.
+    // Used in driver and cathode-follower stages; approximation derived from
+    // published GE plate curves via the Koren / Nizhegorodov fitting procedure.
+    return { /*mu=*/16.5, /*kp=*/65.0, /*kvb=*/300.0, /*kg1=*/875.0, /*x=*/1.35 };
+}
+
 // ── Internal helpers ──────────────────────────────────────────────────────────
 
 namespace {
