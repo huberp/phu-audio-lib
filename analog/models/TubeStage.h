@@ -21,9 +21,11 @@ struct TubeStageConfig {
     double Rk          = 1.5e3;  ///< Cathode resistor (Ω).
     double Ck          = 0.0;    ///< Cathode bypass capacitance (F); 0 = no bypass.
 
-    /// ±V clamp applied to the grid input before the solve.
-    /// Guards against divergence with extreme input; does not affect normal audio levels.
-    double inputClampV = 5.0;
+    /// Last-resort ±V hard clamp applied to the grid input before the NR solve.
+    /// Guards against solver divergence on truly extreme inputs.  With the
+    /// Vgk ≤ 0 grid-conduction clamp enforced inside processSample, this
+    /// threshold is never reached during normal audio operation (±10 V full-scale).
+    double inputClampV = 50.0;
 
     /// Newton-Raphson iteration policy.
     /// Defaults are tuned for tube-stage voltages (unlimited step size; the

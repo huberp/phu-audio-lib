@@ -30,6 +30,10 @@ struct TubeParams {
     /// 6072 — low-noise dual triode (GE/Sylvania, µ ≈ 70; lower gain than 12AX7).
     /// Initial approximation; best available values from published data sheets.
     static TubeParams tubeParams6072() noexcept;
+
+    /// 12BH7 — medium-mu twin triode (µ ≈ 20).
+    /// Initial approximation; values derived from community discussions and tube modeling resources.
+    static TubeParams tubeParams12BH7() noexcept;
 };
 
 // ── Koren triode functions ────────────────────────────────────────────────────
