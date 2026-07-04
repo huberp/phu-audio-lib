@@ -31,6 +31,16 @@ TubeParams TubeParams::tubeParams6072() noexcept
     return { /*mu=*/70.0, /*kp=*/300.0, /*kvb=*/300.0, /*kg1=*/1060.0, /*x=*/1.4 };
 }
 
+TubeParams TubeParams::tubeParams12BH7() noexcept
+{
+    // The 12BH7 is a medium-mu twin triode designed primarily for 
+    // vertical-deflection amplification in television receivers, but it is also used in audio applications
+    // These values are derived from community discussions and tube modeling resources, 
+    // as official Koren parameters for the 12BH7 are not publicly documented.
+    return { /*mu=*/ 20.0,   /*kp=*/ 3000.0,  /*kvb=*/ 150.0,  /*kg1=*/ 1200.0,  /*x=*/ 1.3 };
+}
+
+
 // ── Internal helpers ──────────────────────────────────────────────────────────
 
 namespace {
