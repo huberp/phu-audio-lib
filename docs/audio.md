@@ -127,6 +127,57 @@ xo.processSample(inL, inR, bandsL, bandsR);
 
 ---
 
+## `Iso226`
+**Purpose**
+- ISO 226:2003 equal-loudness contour computation (Fletcher–Munson curves).
+
+**Typical use case**
+- Compute the dB SPL curve that corresponds to a given loudness level in phons, for display overlays on spectrum analyzers, loudness weighting, or perceptual audio processing.
+
+**Need to know**
+- Based on ISO 226:2003 Table 1; covers 29 reference frequencies from 20 Hz to 12.5 kHz.
+  Reference MATLAB implementation: https://www.dsprelated.com/showcode/174.php
+- Valid phon range: 0 – 90.
+- All functions take a **pre-allocated** `std::array<double, N>` output — no heap allocation occurs inside the utility.  The array may be larger than required; return value = number of elements written.
+- `byIsoFreqs` — returns SPL at the 29 standard ISO frequencies (`kFrequencies`).
+- `byGivenFreqs` — returns SPL at arbitrary user frequencies using natural cubic spline interpolation (log10-frequency domain). Frequencies **above 12.5 kHz** are handled by linear extrapolation from the spline slope at 12.5 kHz. Frequencies ≤ 0 Hz yield NaN.
+- `byFFT` — helper that fills an array with FFT bin frequencies; pass the result directly to `byGivenFreqs`.
+
+**Apply when**
+- Rendering equal-loudness contours over a spectrum display.
+- Applying perceptual weighting matched to a known playback level.
+
+**Don't apply when**
+- Need loudness metering (use ITU-R BS.1770 / LUFS instead).
+- Need contours outside 0 – 90 phons or below 20 Hz (standard does not define them).
+
+**Example — standard ISO frequencies**
+```cpp
+std::array<double, phu::audio::Iso226::kNumFreqs> spl;
+phu::audio::Iso226::byIsoFreqs(40.0, spl);
+// spl[i] is dB SPL at Iso226::kFrequencies[i] for 40 phon
+```
+
+**Example — arbitrary frequencies with spline interpolation**
+```cpp
+std::array<double, 6> freqs = {50.0, 200.0, 1000.0, 4000.0, 10000.0, 16000.0};
+std::array<double, 6> spl;
+phu::audio::Iso226::byGivenFreqs(60.0, freqs, spl);
+// freqs[5] = 16000 Hz > 12500 Hz → linear extrapolation applied
+```
+
+**Example — FFT bin contour**
+```cpp
+// For a 2048-point FFT at 48 kHz there are 1025 bins
+std::array<double, 1025> binFreqs;
+std::array<double, 1025> contour;
+phu::audio::Iso226::byFFT(48000.0, 2048, binFreqs);
+phu::audio::Iso226::byGivenFreqs(40.0, binFreqs, contour);
+// contour[0] (DC bin, 0 Hz) is NaN — start loop from index 1
+```
+
+---
+
 ## `NoteToFreq`
 **Purpose**
 - Note-name/MIDI/frequency conversion helpers.

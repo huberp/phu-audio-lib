@@ -11,6 +11,7 @@ target_sources(PhuAudioLib INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/audio/PacketFifo.h
     ${CMAKE_CURRENT_SOURCE_DIR}/audio/FFTProcessor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/audio/LinkwitzRileyFilter.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/audio/Iso226.h
     ${CMAKE_CURRENT_SOURCE_DIR}/audio/NoteToFreq.h
     ${CMAKE_CURRENT_SOURCE_DIR}/audio/PpqAddressedRingBuffer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/audio/RingBufferInsertResult.h

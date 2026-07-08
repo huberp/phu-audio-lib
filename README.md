@@ -13,7 +13,7 @@ Shared JUCE utility library for PHU plugins.
 
 ## Topic Map (for users + coding agents)
 - [analog](docs/analog.md) — MNA circuit solver, Koren triode, tube gain stages, sidechain detector, transformer coloration
-- [audio](docs/audio.md) — fifo, fft, filters, note↔freq, buckets, ppq-ring
+- [audio](docs/audio.md) — fifo, fft, filters, note↔freq, iso226 loudness contours, buckets, ppq-ring
 - [events](docs/events.md) — daw globals, listeners, event source
 - [network](docs/network.md) — udp multicast, spectrum/samples/commands/ctrl, state helpers
 - [debug](docs/debug.md) — mpsc log queue, sink, editor logger
