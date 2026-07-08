@@ -66,7 +66,7 @@ class Iso226 {
      * Compute the equal-loudness contour at user-specified frequencies.
      *
      * Uses natural cubic spline interpolation (in the log10-frequency domain) between
-     * the 29 ISO reference points. Frequencies above 12,500 Hz are handled by linear
+     * the 29 ISO reference points. Frequencies above 12500 Hz are handled by linear
      * extrapolation using the slope of the spline at its upper boundary. Frequencies
      * at or below 0 Hz produce NaN in the corresponding output slot.
      *
@@ -109,7 +109,7 @@ class Iso226 {
                 out[i] = evalSpline(logX.data(), sa.data(), sb.data(), sc.data(), sd.data(),
                                     kNumFreqs, logF);
             } else {
-                // Linear extrapolation beyond 12,500 Hz
+                // Linear extrapolation beyond 12500 Hz
                 const int last = kNumFreqs - 2;
                 const double h   = logXMax - logX[last];
                 const double slope = sb[last] + 2.0 * sc[last] * h + 3.0 * sd[last] * h * h;
@@ -251,7 +251,8 @@ class Iso226 {
         // Natural spline: cFull[m] = 0
         diag[m] = 1.0; z[m] = 0.0; cFull[m] = 0.0;
 
-        // Back substitution
+        // Back substitution — standard cubic spline recurrence; the /3 factor
+        // comes from integrating the piecewise linear second-derivative profile
         for (int j = m - 1; j >= 0; --j) {
             cFull[j] = z[j] - mu[j] * cFull[j + 1];
             b[j] = (y[j + 1] - y[j]) / h[j] - h[j] * (cFull[j + 1] + 2.0 * cFull[j]) / 3.0;
