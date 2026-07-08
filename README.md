@@ -2,6 +2,8 @@
 
 Shared JUCE utility library for PHU plugins.
 
+Requires **C++20** or later.
+
 ## Hero / Highlights
 - DSP core blocks for real-time audio workflows
 - Analog circuit modeling: MNA solver, Koren triode, tube stages, sidechain detector, transformer coloration

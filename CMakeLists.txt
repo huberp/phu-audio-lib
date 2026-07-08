@@ -4,6 +4,7 @@ project(PhuAudioLib LANGUAGES CXX)
 # --- Header-only core (events, audio utilities, memory, util) ---
 add_library(PhuAudioLib INTERFACE)
 target_include_directories(PhuAudioLib INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_features(PhuAudioLib INTERFACE cxx_std_20)
 target_sources(PhuAudioLib INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/audio/AudioSampleFifo.h
     ${CMAKE_CURRENT_SOURCE_DIR}/audio/BeatSyncBuffer.h
@@ -43,6 +44,7 @@ add_library(PhuNetworkLib STATIC
     debug/EditorLogger.cpp
 )
 target_include_directories(PhuNetworkLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_compile_features(PhuNetworkLib PUBLIC cxx_std_20)
 target_link_libraries(PhuNetworkLib PUBLIC PhuAudioLib)
 if(WIN32)
     target_link_libraries(PhuNetworkLib PRIVATE ws2_32)

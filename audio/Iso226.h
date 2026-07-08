@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cstddef>
 #include <limits>
+#include <span>
 
 namespace phu {
 namespace audio {
@@ -21,12 +22,12 @@ namespace audio {
  *  - byGivenFreqs: arbitrary user frequencies; natural cubic spline interpolation
  *                  between the 29 reference points in log10-frequency space;
  *                  linear extrapolation above 12.5 kHz
- *  - byFFT       : helper that fills an array with FFT bin frequencies for use
+ *  - byFFT       : helper that fills a span with FFT bin frequencies for use
  *                  with byGivenFreqs
  *
- * All functions accept a pre-allocated std::array to avoid heap allocation.
- * The array may be larger than needed; the return value is the number of
- * elements written.
+ * All functions write into a caller-supplied std::span<double> to avoid heap
+ * allocation. The span may be larger than needed; the return value is the
+ * number of elements written.
  *
  * Valid phon range: 0 – 90 phons (ISO 226:2003 Table 1 bounds).
  *
@@ -50,14 +51,13 @@ class Iso226 {
      * Compute the equal-loudness contour at the 29 standard ISO reference frequencies.
      *
      * @param phonLevel  Loudness level in phons (valid range: 0 – 90).
-     * @param out        Pre-allocated output array; must hold at least kNumFreqs (29) elements.
+     * @param out        Output span; must hold at least kNumFreqs (29) elements.
      *                   out[i] receives the dB SPL for kFrequencies[i].
      * @return           Number of values written (always kNumFreqs = 29).
      */
-    template <std::size_t N>
-    static std::size_t byIsoFreqs(double phonLevel, std::array<double, N>& out) {
-        static_assert(N >= static_cast<std::size_t>(kNumFreqs),
-                      "Output array must hold at least kNumFreqs (29) elements");
+    static std::size_t byIsoFreqs(double phonLevel, std::span<double> out) {
+        assert(out.size() >= static_cast<std::size_t>(kNumFreqs) &&
+               "out must hold at least kNumFreqs (29) elements");
         computeContour(phonLevel, kAfData, kLuData, kTfData, kNumFreqs, out.data());
         return static_cast<std::size_t>(kNumFreqs);
     }
@@ -72,15 +72,15 @@ class Iso226 {
      *
      * @param phonLevel  Loudness level in phons (valid range: 0 – 90).
      * @param freqs      Input frequencies in Hz.
-     * @param out        Pre-allocated output array; must hold at least NFreq elements.
+     * @param out        Output span; must hold at least freqs.size() elements.
      *                   out[i] receives the dB SPL for freqs[i].
-     * @return           Number of values written (= NFreq).
+     * @return           Number of values written (= freqs.size()).
      */
-    template <std::size_t NFreq, std::size_t NOut>
     static std::size_t byGivenFreqs(double phonLevel,
-                                    const std::array<double, NFreq>& freqs,
-                                    std::array<double, NOut>& out) {
-        static_assert(NOut >= NFreq, "Output array must be at least as large as the frequencies array");
+                                    std::span<const double> freqs,
+                                    std::span<double> out) {
+        assert(out.size() >= freqs.size() &&
+               "out must be at least as large as freqs");
 
         // Compute SPL at the 29 reference points
         std::array<double, kNumFreqs> refSpl{};
@@ -98,7 +98,7 @@ class Iso226 {
 
         const double logXMax = logX[kNumFreqs - 1];
 
-        for (std::size_t i = 0; i < NFreq; ++i) {
+        for (std::size_t i = 0; i < freqs.size(); ++i) {
             const double f = freqs[i];
             if (f <= 0.0) {
                 out[i] = std::numeric_limits<double>::quiet_NaN();
@@ -116,11 +116,11 @@ class Iso226 {
                 out[i] = refSpl[kNumFreqs - 1] + slope * (logF - logXMax);
             }
         }
-        return NFreq;
+        return freqs.size();
     }
 
     /**
-     * Fill an array with FFT bin frequencies for use with byGivenFreqs().
+     * Fill a span with FFT bin frequencies for use with byGivenFreqs().
      *
      * Fills out[i] = i * sampleRate / fftSize for bins 0 … fftSize/2 (inclusive),
      * producing fftSize/2 + 1 values (DC at index 0, Nyquist at index fftSize/2).
@@ -137,14 +137,13 @@ class Iso226 {
      *
      * @param sampleRate  Sample rate in Hz.
      * @param fftSize     FFT size (e.g. 1024, 2048).
-     * @param out         Pre-allocated array; must hold at least fftSize/2 + 1 elements.
+     * @param out         Output span; must hold at least fftSize/2 + 1 elements.
      * @return            Number of values written (= fftSize/2 + 1).
      */
-    template <std::size_t N>
-    static std::size_t byFFT(double sampleRate, int fftSize, std::array<double, N>& out) {
+    static std::size_t byFFT(double sampleRate, int fftSize, std::span<double> out) {
         const int numBins = fftSize / 2 + 1;
-        assert(static_cast<std::size_t>(numBins) <= N &&
-               "Output array must hold at least fftSize/2 + 1 elements");
+        assert(static_cast<std::size_t>(numBins) <= out.size() &&
+               "out must hold at least fftSize/2 + 1 elements");
         for (int i = 0; i < numBins; ++i)
             out[i] = static_cast<double>(i) * sampleRate / static_cast<double>(fftSize);
         return static_cast<std::size_t>(numBins);

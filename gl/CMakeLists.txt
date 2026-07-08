@@ -6,4 +6,5 @@ add_library(PhuGLUtils STATIC
 )
 
 target_include_directories(PhuGLUtils PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/..)
+target_compile_features(PhuGLUtils PUBLIC cxx_std_20)
 target_link_libraries(PhuGLUtils PUBLIC juce::juce_opengl juce::juce_gui_basics)

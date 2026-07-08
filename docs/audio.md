@@ -138,10 +138,11 @@ xo.processSample(inL, inR, bandsL, bandsR);
 - Based on ISO 226:2003 Table 1; covers 29 reference frequencies from 20 Hz to 12.5 kHz.
   Reference MATLAB implementation: https://www.dsprelated.com/showcode/174.php
 - Valid phon range: 0 – 90.
-- All functions take a **pre-allocated** `std::array<double, N>` output — no heap allocation occurs inside the utility.  The array may be larger than required; return value = number of elements written.
+- All functions write into a caller-supplied `std::span<double>` — no heap allocation occurs inside the utility. The span may be larger than required; return value = number of elements written.
+- Accepts any contiguous buffer as output (`std::array`, `std::vector`, raw pointer via `std::span`).
 - `byIsoFreqs` — returns SPL at the 29 standard ISO frequencies (`kFrequencies`).
 - `byGivenFreqs` — returns SPL at arbitrary user frequencies using natural cubic spline interpolation (log10-frequency domain). Frequencies **above 12.5 kHz** are handled by linear extrapolation from the spline slope at 12.5 kHz. Frequencies ≤ 0 Hz yield NaN.
-- `byFFT` — helper that fills an array with FFT bin frequencies; pass the result directly to `byGivenFreqs`.
+- `byFFT` — helper that fills a span with FFT bin frequencies; pass the result directly to `byGivenFreqs`.
 
 **Apply when**
 - Rendering equal-loudness contours over a spectrum display.
@@ -162,7 +163,7 @@ phu::audio::Iso226::byIsoFreqs(40.0, spl);
 ```cpp
 std::array<double, 6> freqs = {50.0, 200.0, 1000.0, 4000.0, 10000.0, 16000.0};
 std::array<double, 6> spl;
-phu::audio::Iso226::byGivenFreqs(60.0, freqs, spl);
+phu::audio::Iso226::byGivenFreqs(60.0, std::span<const double>(freqs), spl);
 // freqs[5] = 16000 Hz > 12500 Hz → linear extrapolation applied
 ```
 
@@ -172,7 +173,7 @@ phu::audio::Iso226::byGivenFreqs(60.0, freqs, spl);
 std::array<double, 1025> binFreqs;
 std::array<double, 1025> contour;
 phu::audio::Iso226::byFFT(48000.0, 2048, binFreqs);
-phu::audio::Iso226::byGivenFreqs(40.0, binFreqs, contour);
+phu::audio::Iso226::byGivenFreqs(40.0, std::span<const double>(binFreqs), contour);
 // contour[0] (DC bin, 0 Hz) is NaN — start loop from index 1
 ```
 
