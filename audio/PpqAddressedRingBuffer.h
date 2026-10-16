@@ -77,8 +77,9 @@ class PpqAddressedRingBuffer {
     }
 
     void prepare(double displayBeats, double bpm, double sampleRate) {
-        setWorkingSize(bpm, sampleRate, displayBeats);
-        clear();
+        const bool sizeChanged = setWorkingSize(bpm, sampleRate, displayBeats);
+        if (sizeChanged)
+            clear();
     }
 
     void clear() {
