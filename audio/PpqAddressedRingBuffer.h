@@ -56,6 +56,14 @@ class PpqAddressedRingBuffer {
         m_buffer.resize(static_cast<size_t>(cap), T{});
     }
 
+    /**
+     * Sets the working size of the ring buffer based on the given BPM, sample rate, and display beats.
+     *
+     * @param bpm The current beats per minute.
+     * @param sampleRate The current sample rate.
+     * @param displayBeats The number of beats to display.
+     * @return True if the working size changed, false otherwise.
+     */
     bool setWorkingSize(double bpm, double sampleRate, double displayBeats) {
         if (bpm <= 0.0 || sampleRate <= 0.0 || displayBeats <= 0.0)
             return false;
