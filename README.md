@@ -23,5 +23,18 @@ Requires **C++20** or later.
 - [memory](docs/memory.md) — aligned allocator, aligned vector
 - [util](docs/util.md) — safe string copy
 
+## Tests
+Unit tests live in [tests](tests) and are header-only (no JUCE needed). Run them standalone:
+
+```
+cmake -S tests -B build/tests
+cmake --build build/tests --config Release
+ctest --test-dir build/tests -C Release --output-on-failure
+```
+
+When this is the top-level project you can also pass `-DPHU_AUDIO_LIB_BUILD_TESTS=ON` (default `OFF`, so consumers never build them). The top-level configure additionally needs JUCE for the `gl/` part, so the standalone route is recommended.
+
+New header-only utilities should get tests in `tests/`.
+
 ## License
 MIT

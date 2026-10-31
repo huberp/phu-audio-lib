@@ -1,0 +1,26 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S tests -B build/tests
+      - name: Build
+        run: cmake --build build/tests --config Release
+      - name: Test
+        run: ctest --test-dir build/tests -C Release --output-on-failure

@@ -55,3 +55,10 @@ add_subdirectory(gl)
 
 # --- Analog circuit simulation DSP library ---
 add_subdirectory(analog)
+
+# --- Unit tests (off by default; consumers via FetchContent never build them) ---
+option(PHU_AUDIO_LIB_BUILD_TESTS "Build the phu-audio-lib unit tests" OFF)
+if(PHU_AUDIO_LIB_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
